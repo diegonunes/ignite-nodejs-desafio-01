@@ -3,6 +3,7 @@ const cors = require("cors");
 
 // const { v4: uuidv4 } = require('uuid');
 const { v4: uuidv4 } = require("uuid");
+const { query } = require("express");
 
 const app = express();
 
@@ -74,6 +75,21 @@ app.post("/todos", checksExistsUserAccount, (request, response) => {
 
 app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
   // Complete aqui
+  const { user } = request;
+
+  const { title, deadline } = request.body;
+  const { id } = request.params;
+
+  const todo = user.todos.find((todo) => todo.id === id);
+
+  if (!todo) {
+    return response.status(404).json({ error: "Todo not found" });
+  }
+
+  todo.title = title;
+  todo.deadline = new Date(deadline);
+
+  return response.status(201).send(todo);
 });
 
 app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
