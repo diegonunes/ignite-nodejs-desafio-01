@@ -27,6 +27,24 @@ function checksExistsUserAccount(request, response, next) {
 
 app.post("/users", (request, response) => {
   // Complete aqui
+  const { username, name } = request.body;
+
+  const userAlreadyExists = users.some((user) => user.username === username);
+
+  if (userAlreadyExists) {
+    return response.status(400).json({ error: "User already exists" });
+  }
+
+  const user = {
+    id: uuidv4(),
+    username,
+    name,
+    todos: [],
+  };
+
+  users.push(user);
+
+  return response.status(201).send(user);
 });
 
 app.get("/todos", checksExistsUserAccount, (request, response) => {
